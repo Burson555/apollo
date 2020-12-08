@@ -1,40 +1,57 @@
-# Define all coms in DAG streaming.
 module_config {
-    module_library : "/apollo/bazel-bin/modules/drivers/lidar/velodyne/driver/libvelodyne_driver_component.so"
+    module_library : "/apollo/bazel-bin/modules/drivers/lidar/robosense/librobosense_driver_component.so"
+    components {
+        class_name : "RobosenseComponent"
+        config {
+          name : "RS16_left_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/conf/rs16_left.pb.txt"
+        }
+    }
 
     components {
-      class_name : "VelodyneDriverComponent"
-      config {
-        name : "velodyne_driver"
-        config_file_path : "/apollo/modules/drivers/lidar/conf/lidar_conf.pb.txt"
-      }
+        class_name : "RobosenseComponent"
+        config {
+          name : "RS16_right_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/conf/rs16_right.pb.txt"
+        }
+    }
+
+    components {
+        class_name : "RobosenseComponent"
+        config {
+          name : "RS16_back_Driver"
+          config_file_path : "/apollo/modules/drivers/lidar/conf/rs16_back.pb.txt"
+        }
     }
 }
 
+##################################################
+#                   fusion                      #
+##################################################
 module_config {
-    module_library : "/apollo/bazel-bin/modules/drivers/lidar/velodyne/parser/libvelodyne_convert_component.so"
+    module_library : "/apollo/bazel-bin/modules/drivers/lidar/velodyne/fusion/libvelodyne_fusion_component.so"
 
     components {
-      class_name : "VelodyneConvertComponent"
+      class_name : "PriSecFusionComponent"
       config {
-        name : "velodyne_convert"
-        config_file_path : "/apollo/modules/drivers/lidar/conf/lidar_conf.pb.txt"
-        readers {channel: "/apollo/sensor/lidar16/Scan"}
-      }
+        name : "velodyne_fusion"
+        config_file_path : "/apollo/modules/drivers/lidar/conf/robo_fusion_conf.pb.txt"
+        readers {channel: "/apollo/sensor/lidar16/back/PointCloud2"}
     }
+  }
 }
 
+##################################################
+#                compensation                    #
+##################################################
 module_config {
     module_library : "/apollo/bazel-bin/modules/drivers/lidar/velodyne/compensator/libvelodyne_compensator_component.so"
-
     components {
       class_name : "CompensatorComponent"
       config {
-        name : "velodyne_compensator"
-        config_file_path : "/apollo/modules/drivers/lidar/conf/lidar_fusion_compensator.pb.txt"
-        readers {channel: "/apollo/sensor/lidar16/PointCloud2"}
+        name : "RS16_Compensator"
+        config_file_path : "/apollo/modules/drivers/lidar/conf/lidar16_fusion_compensator.pb.txt"
+        readers {channel: "/apollo/sensor/lidar16/fusion/PointCloud2"}
       }
     }
 }
-
-
