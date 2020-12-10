@@ -26,8 +26,8 @@
 #include "modules/perception/camera/common/util.h"
 #include "modules/perception/camera/lib/interface/base_feature_extractor.h"
 #include "modules/perception/camera/lib/interface/base_obstacle_detector.h"
-#include "modules/perception/camera/lib/obstacle/detector/yolov4/proto/yolov4.pb.h"
-#include "modules/perception/camera/lib/obstacle/detector/yolov4/region_output.h"
+#include "modules/perception/camera/lib/obstacle/detector/myyolo/proto/myyolo.pb.h"
+#include "modules/perception/camera/lib/obstacle/detector/myyolo/region_output.h"
 #include "modules/perception/inference/inference.h"
 #include "modules/perception/inference/utils/resize.h"
 #include "modules/perception/inference/utils/util.h"
@@ -36,10 +36,10 @@ namespace apollo {
 namespace perception {
 namespace camera {
 
-class Yolov4ObstacleDetector : public BaseObstacleDetector {
+class MyYoloObstacleDetector : public BaseObstacleDetector {
  public:
-  Yolov4ObstacleDetector() : BaseObstacleDetector() {}
-  virtual ~Yolov4ObstacleDetector() {
+  MyYoloObstacleDetector() : BaseObstacleDetector() {}
+  virtual ~MyYoloObstacleDetector() {
     if (stream_ != nullptr) {
       cudaStreamDestroy(stream_);
     }
@@ -50,7 +50,7 @@ class Yolov4ObstacleDetector : public BaseObstacleDetector {
 
   bool Detect(const ObstacleDetectorOptions &options,
               CameraFrame *frame) override;
-  std::string Name() const override { return "YoloObstacleDetector"; }
+  std::string Name() const override { return "MyYoloObstacleDetector"; }
 
  protected:
   void LoadInputShape(const yolo::ModelParam &model_param);
@@ -65,19 +65,15 @@ class Yolov4ObstacleDetector : public BaseObstacleDetector {
   yolo::YoloParam yolo_param_;
   std::shared_ptr<base::BaseCameraModel> base_camera_model_ = nullptr;
   std::shared_ptr<inference::Inference> inference_;
-  std::vector<base::ObjectSubType> types_;
+  std::vector<base::MyObjectType> types_;
         // @self-defined object types
         // enum class MyObjectType {
-        //   UNKNOWN = 0,
-        //   UNKNOWN_MOVABLE = 1,
-        //   UNKNOWN_UNMOVABLE = 2,
-        //   CAR = 3,
-        //   TRUCK = 4,
-        //   BUS = 5,
-        //   CYCLE = 6,
-        //   MOTORCYCLE = 7,
-        //   PERSON = 8,
-        //   MAX_OBJECT_TYPE = 9,
+        //   BICYCLE = 0,
+        //   BUS = 1,
+        //   CAR = 2,
+        //   MOTORBIKE = 3,
+        //   PERSON = 4,
+        //   MAX_OBJECT_TYPE = 5,
         // };
   std::vector<float> expands_;
   std::vector<float> anchors_;

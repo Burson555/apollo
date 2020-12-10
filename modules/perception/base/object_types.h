@@ -76,6 +76,17 @@ enum class ObjectSubType {
   MAX_OBJECT_TYPE = 12,
 };
 
+// @brief self-defined object types
+@self-defined object types
+enum class MyObjectType {
+  BICYCLE = 0,
+  BUS = 1,
+  CAR = 2,
+  MOTORBIKE = 3,
+  PERSON = 4,
+  MAX_OBJECT_TYPE = 5,
+};
+
 // @brief motion state
 enum class MotionState {
   UNKNOWN = 0,
